@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  app:
+    image: php:7.4.7-cli
+    depends_on:
+      - vault
+    volumes:
+      - ./src/app:/app
+
+  vault:
+    image: vault:1.4.2
+    command: vault server -config=/vault/config/config.json
+    volumes:
+      - ./docker/vault/config:/vault/config
+      - ./docker/vault/data:/vault/data
+      - ./docker/vault/policies:/vault/policies
+    ports:
+      - 8200:8200
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - VAULT_ADDR=http://0.0.0.0:8200
+      - VAULT_API_ADDR=http://0.0.0.0:8200
+    hostname: vault
